@@ -14,7 +14,7 @@ sidebar_position: 12
 * 管理员,发送者与接受者三种身份对消息的CRUD操作
 
 ## 流程图
-![](https://img.pincman.com/media202209151659834.png)
+![](https://img.pincman.com/media202209151729690.png)
 
 ### 预装类库
 
