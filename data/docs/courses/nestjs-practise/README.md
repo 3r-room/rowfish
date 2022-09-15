@@ -112,7 +112,7 @@ Node.js的优势并不在于生态或性能
 8. 👉 [CRUD抽象化框架构建](/docs/courses/nestjs-practise/chapter8)
 9. 👉 [JWT与守卫实现](/docs/courses/nestjs-practise/chapter9)
 10. 👉 [Redis+BullMQ实现短信及邮件验证](/docs/courses/nestjs-practise/chapter10)
-11. websocket实现IM功能与SSE实现消息广播
+11. 👉 [websocket实现消息功能与SSE的使用](/docs/courses/nestjs-practise/chapter11)
 12. RBAC权限系统
 13. 用户资源与动态关联实现
 14. 配置模块与Open API(swagger)配置实现
