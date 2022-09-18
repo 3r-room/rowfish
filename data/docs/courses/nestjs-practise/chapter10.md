@@ -12,14 +12,24 @@ sidebar_position: 11
 * 使用Nodemailer通过队列异步发送邮件
 * 使用email-templates制作邮件模板并整合Nodemailer
 
-## 应用编码
+## 流程图
 
-### 预装类库
+发信队列流程图
+
+![](https://img.pincman.com/media202209182003843.png)
+
+业务流程图
+
+![](https://img.pincman.com/media202209182002670.png)
+
+## 预装类库
 
 在开始编码之前请安装以下类库
 
+> 由于chalk5和find-up6需要使用esm，我们当前的应用没有使用esm导致无法兼容，所以装老版本即可
+
 ```shell
-~ pnpm add @nestjs/bullmq bullmq chalk@^4.1.2 dotenv email-templates find-up@5 nodemailer tencentcloud-sdk-nodejs
+~ pnpm add @nestjs/bullmq bullmq chalk@^4.1.2 dotenv email-templates find-up@5 nodemailer tencentcloud-sdk-nodejs ioredis
 ~ pnpm add @types/nodemailer @types/email-templates -D
 ```
 
@@ -387,42 +397,6 @@ export class SmsService {
 
 ```
 
-#### CoreModule
-
-修改`CoreModule`添加短信服务为提供者以及导出
-
-```typescript
-// src/modules/core/core.module.ts
-    public static forRoot(options: CoreOptions = {}): DynamicModule {
-        let imports: ModuleMetadata['imports'] = [];
-
-        let providers: ModuleMetadata['providers'] = [
-           ...
-        ];
-
-        const exps: ModuleMetadata['exports'] = [];
-
-        if (options.database) {
-            ...
-        }
-
-        if (options.sms) {
-            providers.push({
-                provide: SmsService,
-                useFactory: () => new SmsService(options.sms()),
-            });
-            exps.push(SmsService);
-        }
-        return {
-            global: true,
-            imports,
-            providers,
-            exports: exps,
-            module: CoreModule,
-        };
-    }
-```
-
 ### 邮件发送
 
 与短信类似的编写流程
@@ -499,62 +473,180 @@ export class SmtpService {
      */
     protected async makeSend(client: Mail, params: SmtpSendParams, options: SmtpOptions)
 }
-
-// src/modules/core/core.module.ts
- if (options.smtp) {
-    providers.push({
-        provide: SmtpService,
-            useFactory: () => new SmtpService(options.smtp()),
-        });
-    exps.push(SmtpService);
-}
 ```
 
 ### 消息队列
 
-消息队列使用BullMQ+Redis实现
+消息队列使用BullMQ+Redis实现，所以我们需要同时增加两个配置分别用于Redis和BullMQ
 
-添加配置类型
+#### 类型
 
 ```typescript
-// src/modules/core/types.ts
+// src/helpers/types.ts
+/**
+ * Redis配置
+ */
+export type RedisOptions = IoRedisOptions | Array<RedisOption>;
 
+/**
+ * Redis连接配置
+ */
+export type RedisOption = Omit<IoRedisOptions, 'name'> & { name: string };
+
+/**
+ * BullMQ模块注册配置
+ */
+export type BullOptions = BullMQOptions | Array<{ name: string } & BullMQOptions>;
+
+/**
+ * 队列配置
+ */
+export type QueueOptions = QueueOption | Array<{ name: string } & QueueOption>;
+
+/**
+ * 队列项配置
+ */
+export type QueueOption = Omit<BullMQOptions, 'connection'> & { redis?: string };
+
+// src/modules/core/types.ts
 /**
  * core模块参数选项
  */
 export interface CoreOptions {
     database?: () => TypeOrmModuleOptions;
-    queue?: () => QueueConfig;
+    queue?: () => QueueOptions;
     sms?: () => SmsOptions;
     smtp?: () => SmtpOptions;
+    redis?: () => RedisOptions;
 }
+```
+
+#### 配置生成
+
+BullMQ根据Redis的连接名称来设置`connection`属性，所以需要添加两个配置生成函数
+
+```typescript
+// src/helpers/options.ts
+/**
+ * 生成Redis配置
+ * @param options
+ */
+export const createRedisOptions = (options: RedisOptions) => {
+    ...
+};
 
 /**
- * 队列配置
+ * 生成BullMQ模块的peizhi
+ * @param options
+ * @param redis
  */
-export type QueueConfig = QueueOptions | Array<{ name: string } & QueueOptions>;
+export const createQueueOptions = (
+    options: QueueOptions,
+    redis: Array<RedisOption>,
+): BullOptions | undefined => {
+    ...
+};
+
 ```
 
 添加配置与注册`BullMQ`模块
 
 ```typescript
-// src/config/queue.config.ts
-export const queue: () => QueueConfig = () => ({
-    connection: {
-        host: 'localhost',
-        port: 6379,
-    },
+// src/config/redis.config.ts
+export const redis: () => RedisOptions = () => ({
+    host: 'localhost',
+    port: 6379,
 });
 
-// src/modules/core/core.module.ts
-if (options.queue) {
-    const queue = options.queue();
-    if (isArray(queue)) {
-        imports = queue.map((v) => BullModule.forRoot(v.name, omit(v, ['name'])));
-    } else {
-        imports.push(BullModule.forRoot(queue));
+// src/config/queue.config.ts
+export const queue: () => QueueOptions = () => ({
+    redis: 'default',
+});
+```
+
+#### Reids服务
+
+新增一个Redis服务类，用于根据配置获取`IoRedis`的客户端
+
+```typescript
+// src/modules/core/services/redis.service.ts
+@Injectable()
+export class RedisService {
+    protected options: Array<RedisOption>;
+
+    protected clients: Map<string, RedisType> = new Map();
+
+    constructor(options: Array<RedisOption>) {
+        this.options = options;
     }
+
+    async createClients()
+
+    getClient(name?: string): Redis
+
+    getClients(): Map<string, Redis>
 }
+```
+
+### Core模块
+
+在`forRoot`中注册邮件，短信及Reids服务与导入BullMQ模块
+
+```typescript
+// src/modules/core/core.module.ts
+public static forRoot(options: CoreOptions = {}): DynamicModule {
+       ...
+        const exps: ModuleMetadata['exports'] = [];
+
+        if (options.redis) {
+            const redis = createRedisOptions(options.redis());
+            if (!isNil(redis)) {
+                providers.push({
+                    provide: RedisService,
+                    useFactory: () => {
+                        const service = new RedisService(redis);
+                        service.createClients();
+                        return service;
+                    },
+                });
+                exps.push(RedisService);
+                if (options.queue) {
+                    const queue = createQueueOptions(options.queue(), redis);
+                    if (!isNil(queue)) {
+                        if (isArray(queue)) {
+                            imports = queue.map((v) =>
+                                BullModule.forRoot(v.name, omit(v, ['name'])),
+                            );
+                        } else {
+                            imports.push(BullModule.forRoot(queue));
+                        }
+                    }
+                }
+            }
+        }
+
+        if (options.sms) {
+            providers.push({
+                provide: SmsService,
+                useFactory: () => new SmsService(options.sms()),
+            });
+            exps.push(SmsService);
+        }
+        if (options.smtp) {
+            providers.push({
+                provide: SmtpService,
+                useFactory: () => new SmtpService(options.smtp()),
+            });
+            exps.push(SmtpService);
+        }
+        return {
+            global: true,
+            imports,
+            providers,
+            exports: exps,
+            module: CoreModule,
+        };
+    }
 ```
 
 ## 用户模块
@@ -1048,9 +1140,8 @@ export class QueryUserDto {
 在`UserModule`上注册发信队列
 
 ```typescript
+
 ```
-
-
 
 #### 发信消费者
 

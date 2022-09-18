@@ -112,7 +112,7 @@ Node.js的优势并不在于生态或性能
 8. 👉 [CRUD抽象化框架构建](/docs/courses/nestjs-practise/chapter8)
 9. 👉 [JWT与守卫实现](/docs/courses/nestjs-practise/chapter9)
 10. 👉 [Redis+BullMQ实现短信及邮件验证](/docs/courses/nestjs-practise/chapter10)
-11. 👉 [websocket实现消息功能与SSE的使用](/docs/courses/nestjs-practise/chapter11)
+11. 👉 [WebSocket实现消息广播功能](/docs/courses/nestjs-practise/chapter11)
 12. RBAC权限系统
 13. 用户资源与动态关联实现
 14. 配置模块与Open API(swagger)配置实现
@@ -123,7 +123,7 @@ Node.js的优势并不在于生态或性能
 19. 实现数据结构迁移命令与数据填充命令
 20. HTTP客户端与爬虫实现
 21. Crontab 定时任务开编写
-22. Graphql api编写
+22. Graphql,SSE等其它功能的基本使用
 23. Nginx反向代理与PM2部署
 24. Gitea+Drone自动化CI/CD
 25. 使用Lerna/pnpm实现Monorepo组织结构

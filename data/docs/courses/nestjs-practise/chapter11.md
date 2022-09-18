@@ -1,9 +1,9 @@
 ---
-sidebar_label: websocket实现消息功能与SSE的使用
+sidebar_label: WebSocket实现消息广播功能
 sidebar_position: 12
 ---
 
-# websocket实现消息功能与SSE的使用
+# WebSocket实现消息广播功能
 
 ## 学习目标
 
@@ -14,7 +14,7 @@ sidebar_position: 12
 * 管理员,发送者与接受者三种身份对消息的CRUD操作
 
 ## 流程图
-![](https://img.pincman.com/media202209151729690.png)
+![](https://img.pincman.com/media202209182006519.png)
 
 ### 预装类库
 
