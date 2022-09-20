@@ -73,3 +73,7 @@
 .yargs-icon::before {
     background-image: url('/images/icons/react-router.png');
 }
+
+.zhaopin-icon::before {
+    mask-image: url('/images/icons/zhaopin.svg');
+}
