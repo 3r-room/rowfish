@@ -12,7 +12,7 @@ sidebar_position: 10
 
 ## 流程图
 
-![未命名文件(4)](https://img.pincman.com/media202209211148913.png)
+![](https://img.pincman.com/media202209211148913.png)
 
 ## 应用编码
 
