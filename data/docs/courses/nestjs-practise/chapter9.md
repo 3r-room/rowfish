@@ -10,18 +10,73 @@ sidebar_position: 10
 * 实现JWT登录与Token自动刷新
 * 实现Auth守卫
 
+## 流程图
+
+![未命名文件(4)](https://img.pincman.com/media202209211148913.png)
+
 ## 应用编码
 
 ### 预装类库
 
 在开始编码之前请安装以下类库
 
-```
-~ pnpm add @nestjs/passport passport passport-local @nestjs/jwt passport-jwt fastify uuid dayjs jsonwebtoken
-~ pnpm add @types/passport-local @types/passport-jwt @types/jsonwebtoken @types/uuid @types/bcrypt -D
+```shell
+~ pnpm add @nestjs/passport passport passport-local @nestjs/jwt passport-jwt bcrypt jsonwebtoken
+~ pnpm add @types/passport-local @types/passport-jwt @types/jsonwebtoken @types/bcrypt -D
 ```
 
 ### 配置和工具函数
+
+新增一个用户模块
+
+```typescript
+// src/modules/user/user.module.ts
+
+@Module({
+    ...
+})
+export class UserModule {}
+```
+
+添加以下类型
+
+```typescript
+// src/modules/user/types.ts
+
+// 用户配置
+export interface UserConfig {
+    hash?: number;
+    jwt: JwtConfig;
+}
+// Jwt配置
+export interface JwtConfig {
+    secret: string;
+    token_expired: number;
+    refresh_secret: string;
+    refresh_token_expired: number;
+}
+// Jwt签名荷载
+export interface JwtPayload {
+    sub: string;
+    iat: number;
+}
+```
+
+添加用于密码验证的工具函数
+
+```typescript
+// src/modules/core/helpers.ts
+
+// 加密明文密码
+export const encrypt = (password: string) => {
+    return bcrypt.hashSync(password, userConfig().hash);
+};
+
+// 验证密码
+export const decrypt = (password: string, hashed: string) => {
+    return bcrypt.compareSync(password, hashed);
+};
+```
 
 ### 数据层
 
@@ -38,7 +93,9 @@ sidebar_position: 10
 
 * `value`为`accessToken`或`refreshToken`的令牌值
 
-```
+```typescript
+// src/modules/user/entities/base.token.ts
+
 export abstract class BaseToken extends BaseEntity {
     @PrimaryGeneratedColumn('uuid')
     id!: string;
@@ -68,7 +125,9 @@ export abstract class BaseToken extends BaseEntity {
 * 此模型与用户多对一关联，同时在删用户除时清空他的全部令牌
 * 此模型与Token刷新模型一对一关联，同时在删除一个`accessToken`时删除其`refreshToken`
 
-```
+```typescript
+// src/modules/user/entities/access-token.entity.ts
+
 @Entity('user_access_tokens')
 export class AccessTokenEntity extends BaseToken {
     @OneToOne(() => RefreshTokenEntity, (refreshToken) => refreshToken.accessToken, {
@@ -89,7 +148,9 @@ export class AccessTokenEntity extends BaseToken {
 
 添加此模型的目的在于如果用户的`accessToken`过期，那么根据他提供的`refreshToken`是否也失效来判定是否能刷新`accessToken`
 
-```
+```typescript
+// src/modules/user/entities/refresh-token.entity.ts
+
 @Entity('user_refresh_tokens')
 export class RefreshTokenEntity extends BaseToken {
     @OneToOne(() => AccessTokenEntity, (accessToken) => accessToken.refreshToken, {
@@ -105,7 +166,9 @@ export class RefreshTokenEntity extends BaseToken {
 
 用于存储用户数据，并与文章进行关联，同时用户数据支持软删除
 
-```
+```typescript
+// src/modules/user/entities/user.entity.ts
+
 @Entity('users')
 export class UserEntity extends BaseEntity {
     // ...
@@ -135,17 +198,12 @@ export class UserEntity extends BaseEntity {
 
 构建一个基础的`queryBuilder`查询器
 
-```
+```typescript
+// src/modules/user/repositories/user.repository.ts
+
 @CustomRepository(UserEntity)
 export class UserRepository extends BaseRepository<UserEntity> {
     protected qbName = 'user';
-
-    /**
-     * 构建基础Query
-     *
-     * @returns
-     * @memberof UserRepository
-     */
     buildBaseQuery() {
         return this.createQueryBuilder(this.qbName).orderBy(`${this.qbName}.createdAt`, 'DESC');
     }
@@ -161,7 +219,9 @@ export class UserRepository extends BaseRepository<UserEntity> {
 * 在注册用户时没有填写用户名或密码的情况下，自动生成不重复的随机用户名以及随机字符串密码
 * 当密码更改时加密密码
 
-```
+```typescript
+// src/modules/user/subscribers/user.subscriber.ts
+
 @EventSubscriber()
 export class UserSubscriber extends BaseSubscriber<UserEntity> {
     protected entity = UserEntity;
@@ -176,11 +236,6 @@ export class UserSubscriber extends BaseSubscriber<UserEntity> {
 
     /**
      * 生成不重复的随机用户名
-     *
-     * @protected
-     * @param {InsertEvent<UserEntity>} event
-     * @return {*}  {Promise<string>}
-     * @memberof UserSubscriber
      */
     protected async generateUserName(event: InsertEvent<UserEntity>): Promise<string> {
         const username = `user_${crypto.randomBytes(4).toString('hex').slice(0, 8)}`;
@@ -192,9 +247,6 @@ export class UserSubscriber extends BaseSubscriber<UserEntity> {
 
     /**
      * 自动生成唯一用户名和密码
-     *
-     * @param {InsertEvent<UserEntity>} event
-     * @memberof UserSubscriber
      */
     async beforeInsert(event: InsertEvent<UserEntity>) {
         // 自动生成唯一用户名
@@ -212,9 +264,6 @@ export class UserSubscriber extends BaseSubscriber<UserEntity> {
 
     /**
      * 当密码更改时加密密码
-     *
-     * @param {UpdateEvent<UserEntity>} event
-     * @memberof UserSubscriber
      */
     async beforeUpdate(event: UpdateEvent<UserEntity>) {
         if (this.isUpdated('password', event)) {
@@ -231,6 +280,8 @@ export class UserSubscriber extends BaseSubscriber<UserEntity> {
 ### 请求验证
 
 注意用户登录验证的`credential`属性可以是用户名,手机号或邮箱地址
+
+文件位置: `src/modules/user/dtos`
 
 * `CredentialDto`: 对用户登录请求进行验证
 * `UpdateAccountDto`: 用于对更新当前账户的请求验证
@@ -251,7 +302,8 @@ export class UserSubscriber extends BaseSubscriber<UserEntity> {
 * `removeAccessToken`方法: 移除AccessToken且自动移除关联的RefreshToken
 * `removeRefreshToken`方法: 移除RefreshToken且自动移除关联的AccessToken
 
-```
+```typescript
+// src/modules/user/services/token.service.ts
 @Injectable()
 export class TokenService {
     private readonly config: JwtConfig;
@@ -280,7 +332,9 @@ export class TokenService {
 * `logout`方法: 登出用户,并删除这次会话的`accessToken`和`refreshToken`
 * `createToken`方法: 创建`accessToken`和`refreshToken`
 
-```
+```typescript
+// src/modules/user/services/auth.service.ts
+
 @Injectable()
 export class AuthService {
     constructor(
@@ -306,7 +360,9 @@ export class AuthService {
 * `findOneByCredential`方法: 根据用户名/email等用户凭证查询用户
 * `findOneByCondition`方法: 根据条件对象查询用户
 
-```
+```typescript
+// src/modules/user/services/user.service.ts
+
 @Injectable()
 export class UserService extends BaseService<UserEntity, UserRepository> {
     protected enable_trash = true;
@@ -330,8 +386,9 @@ export class UserService extends BaseService<UserEntity, UserRepository> {
 
 `validate`方法通过荷载解析出用户ID，并把id放入request方便后续操作
 
-```
-Injectable()
+```typescript
+// src/modules/user/strategies/jwt.strategy.ts
+@Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
     // 配置JWT策略
     constructor(private readonly userRepository: UserRepository) {
@@ -349,7 +406,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
 `validate`方法通过`construct`获取的`credential`和`password`数据进行验证，而`credential`和`password`是通过请求上下文从请求数据中读取的. 最终`validate`将会返回当前登录的`user`对象传入到控制器中
 
-```
+```typescript
+// src/modules/user/strategies/local.strategy.ts
+
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
     constructor(private readonly authService: AuthService) {
@@ -377,7 +436,9 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 
 这个守卫的默认作用在把请求数据赋值给`LocalStrategy`，以便它使用`validate`对用户进行验证，而我们添加一步处理，就是在把`request.body`赋值给`LocalStrategy`之前先对它尝试序列化为`CredentialDto`的对象，以便预检测请求的数据是否符合要求
 
-```
+```typescript
+// src/modules/user/guards/local-auth.guard.ts
+
 export class LocalAuthGuard extends AuthGuard('local') {
     async canActivate(context: ExecutionContext) {
         const request = context.switchToHttp().getRequest();
@@ -399,14 +460,18 @@ JWT守卫用于验证用户的登录状态
 
 在编写之前首先需要添加一个自定义的装饰器用于判断是否允许游客请求
 
-```
+```typescript
+// src/modules/user/decorators/guest.decorator.ts
+
 import { ALLOW_GUEST } from '@/modules/core/constants';
 export const Guest = () => SetMetadata(ALLOW_GUEST, true);
 ```
 
 另一个装饰器`ReqUser`则用于获取当前登录用户的信息
 
-```
+```typescript
+// src/modules/user/decorators/user-request.decorator.ts
+
 export const ReqUser = createParamDecorator(async (_data: unknown, ctx: ExecutionContext) => {
     const request = ctx.switchToHttp().getRequest();
     return request.user as ClassToPlain<UserEntity>;
@@ -415,7 +480,8 @@ export const ReqUser = createParamDecorator(async (_data: unknown, ctx: Executio
 
 `handleRequest`方法用于在`canActivate`返回`false`后响应的错误进行处理
 
-```
+```typescript
+// src/modules/user/guards/jwt-auth.guard.ts  
     async canActivate(context: ExecutionContext) {
         const crudGuest = Reflect.getMetadata(
             ALLOW_GUEST,
@@ -474,7 +540,9 @@ export const ReqUser = createParamDecorator(async (_data: unknown, ctx: Executio
 * `profile`: 读取个人信息
 * `update`: 更新个人信息
 
-```
+```typescript
+// src/modules/user/controllers/account.controller.ts
+
 @Controller('account')
 export class AccountController {
     constructor(
@@ -519,7 +587,9 @@ export class AccountController {
 
 用于用户管理的操作，继承自`BaseController`
 
-```
+```typescript
+// src/modules/user/controllers/user.controller.ts
+
 @Crud({
     id: 'user',
     enabled: [
@@ -544,4 +614,34 @@ export class UserController extends BaseController<UserService> {
         super(userService);
     }
 }
+```
+
+### 模块
+
+在模块中尽量把`JwtAuthGuard`注册为全局的守卫，这样就只要在不需要JWT验证的请求上加上`@Guest`装饰器就可以了
+
+```typescript
+// src/modules/user/user.module.ts
+@Module({
+    imports: [
+        TypeOrmModule.forFeature(entities),
+        CoreModule.forRepository(repositories),
+        PassportModule,
+        serviceMaps.AuthService.jwtModuleFactory(),
+    ],
+    providers: [
+        ...strategies,
+        ...dtos,
+        ...services,
+        ...guards,
+        ...subscribers,
+        {
+            provide: APP_GUARD,
+            useClass: JwtAuthGuard,
+        },
+    ],
+    controllers,
+    exports: [...services, CoreModule.forRepository(repositories)],
+})
+export class UserModule {}
 ```
