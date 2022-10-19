@@ -75,19 +75,19 @@ const navbarItems = [
         className: 'navicon links-icon',
     },
 
-    {
-        to: '/zhaopin',
-        label: '招聘合作',
-        position: 'right',
-        className: 'navicon links-icon',
-    },
+    // {
+    //     to: '/zhaopin',
+    //     label: '招聘合作',
+    //     position: 'right',
+    //     className: 'navicon links-icon',
+    // },
 
-    {
-        href: 'https://eleduck.com/',
-        label: '远程工作',
-        position: 'right',
-        className: 'navicon dianya-icon',
-    },
+    // {
+    //     href: 'https://eleduck.com/',
+    //     label: '远程工作',
+    //     position: 'right',
+    //     className: 'navicon dianya-icon',
+    // },
 ];
 module.exports = {
     site: {

@@ -101,6 +101,12 @@ export const linksData: LinkCategory[] = [
                 href: 'https://studygolang.com/',
                 logo: require('./images/links/20210430012642.png'),
             },
+            {
+                name: '电鸭',
+                desc: '远程工作、自由职业、兼职外包,自由从这开始',
+                href: 'https://eleduck.com/',
+                logo: require('./images/links/eleduck.png'),
+            },
         ],
     },
     {
