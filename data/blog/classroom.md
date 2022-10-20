@@ -1,6 +1,6 @@
 ---
 slug: classroom
-title: 3R教室 -- 深入TS全栈学习,轻松求职远程工作,快速承接海外外包,爱生活,更爱自由!
+title: 3R教室 -- 深入TS全栈学习，轻松求职远程工作，快速承接海外外包，爱生活，更爱自由!
 type: image
 image: ./images/classroom.png
 authors: [pincman]
@@ -19,7 +19,7 @@ order: 0
 [react18-course]: /docs/courses/react18-practise
 [nestjs-course]: /docs/courses/nestjs-practise/
 
-[3R教室][classroom](即 **Remote Learn->Remote Work<->Remote Order**)是[平克小站][site]推出的一个旨在帮助大家快速掌握TS全栈(typescript+react18+node.js/nestjs+devops)开发技能，同时为同学们提供远程工作求职和远程外包接单渠道拓展的综合性服务。协助各位在失业或者高压低薪以及996苦海中挣扎走钢丝的Coder朋友以最快最好的方法寻找远程工作或自由接单，实现生活与工作分离的梦想.
+[3R教室][classroom](即 **Remote Learn->Remote Work<->Remote Order**)是[*平克小站*][site]推出的一个旨在帮助大家快速掌握TS全栈(typescript+react18+node.js/nestjs+devops)开发技能，同时为同学们提供远程工作求职和远程外包接单渠道拓展的综合性服务。协助各位在失业或者高压低薪以及996苦海中挣扎走钢丝的Coder朋友以最快最好的方法寻找远程工作或自由接单，实现生活与工作分离的梦想.
 
 我们目标是——**在自由轻松不影响家庭生活的环境中实现稳定收入**
 
@@ -41,7 +41,7 @@ order: 0
 
 3R教室的教学内容主题为**TS全栈开发**，围绕此主题精心设计了一套适用于远程办公求职及海外外包接收的技术栈(目前国内也有越来越多的企业使用这套技术栈了)。我们的后端教学以Node.js为基础，在此之上以Nestjs框架为主体进行讲解，当然也包含了Node.js的常用生态和技能。前端教学重在讲解React，同时也包含一些常用的周边生态，比如tailwindcss,nextjs等等,具体知识点和课程表请看下面两张图
 
-![](https://img.pincman.com/media202210171505845.png)
+![](https://img.pincman.com/media202210201615940.png)
 
 ## 🎓如何学习
 

@@ -41,7 +41,7 @@ export const tips: TipItem[] = [
     },
     {
         id: 'buy',
-        content: 'Rowfish主题v2(本站主题)发布啦,欢迎使用哦！<a href="/rowfish">看一下介绍</a>',
+        content: 'Rowfish 主题v2(本站主题)发布啦，欢迎使用哦！<a href="/rowfish">看一下介绍</a>',
         pages: ['blog'],
         color: 'secondary',
         closeTime: 3600 * 24,
@@ -49,7 +49,7 @@ export const tips: TipItem[] = [
     {
         id: 'subscriber',
         content:
-            '一次订阅终身受益，可永久获取本站所有视频教程的文档，源代码及获得问答服务，<a href="/about/#订阅小站">点此订阅</a>',
+            '一次订阅终身受益，可永久获取本站所有视频教程的文档、源代码及获得问答服务，<a href="/about/#订阅小站">点此订阅</a>',
         pages: ['blog'],
         color: 'success',
         closeTime: 3600 * 24,
