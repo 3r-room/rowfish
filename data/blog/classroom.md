@@ -1,6 +1,6 @@
 ---
 slug: classroom
-title: 3R教室 -- 深入TS全栈学习，轻松求职远程工作，快速承接海外外包，爱生活，更爱自由!
+title: 3R教室 -- 全面学习TS全栈开发，轻松求职远程工作，快速承接海外外包，爱生活，更爱自由!
 type: image
 image: ./images/classroom.png
 authors: [pincman]
