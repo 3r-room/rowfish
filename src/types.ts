@@ -42,6 +42,7 @@ export interface CourseCardItemType {
     status?: 0 | 1 | 2;
     image?: string;
     target?: string;
+    forsub?: boolean;
 }
 
 export interface WorkCardItemType {

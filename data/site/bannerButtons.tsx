@@ -13,16 +13,16 @@ export const bannerButtons: BannerButtonType[] = [
         link: '/classroom',
     },
     {
+        title: '订阅本站',
+        icon: () => <CourseIcon />,
+        desc: '永久享用本站所有视频教程',
+        link: '/subscriber',
+    },
+    {
         title: '自由办公',
         icon: () => <WorkIcon />,
         desc: '助你寻找远程工作与接单渠道',
         link: '/classroom',
-    },
-    {
-        title: '视频教程',
-        icon: () => <CourseIcon />,
-        desc: '免费的实践教程帮你提升技能',
-        link: '/docs/courses',
     },
     {
         title: '接单开发',

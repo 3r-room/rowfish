@@ -68,7 +68,7 @@ export const BlogPostItem: FC<Props> = (props) => {
     const {
         rf_banner: headerImg,
         image: metaImage,
-        rf_comment: enableComment = true,
+        rf_comment: enableComment = false,
         rf_excerpt: enableExcerpt = true,
     } = frontMatter as any;
     const [image, setImage] = useState(assets.image ?? metaImage);

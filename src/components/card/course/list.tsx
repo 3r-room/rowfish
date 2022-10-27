@@ -101,25 +101,35 @@ export const CourseCardItem: FC<{ course: CourseCardItemType; i: number }> = ({ 
         </Link>
     );
 };
-export const CourseCards: FC<{ data: CourseCardItemType[] }> = ({ data }) => (
+export const CourseCards: FC<{
+    data: CourseCardItemType[];
+    button?: boolean;
+    subscriber?: boolean;
+}> = ({ data, button = true, subscriber }) => (
     <>
         <div className={clsx($styles.container)}>
-            {data.map((course, i) => (
-                <CourseCardItem key={i.toFixed()} course={course} i={i} />
-            ))}
+            {data
+                .filter((course) => (course.forsub && subscriber) || !subscriber)
+                .map((course, i) => (
+                    <CourseCardItem key={i.toFixed()} course={course} i={i} />
+                ))}
         </div>
-        <div className="tw-mt-5 tw-text-center tw-w-full">
-            <Link className="tw-ghostBtn" href="/about/#订阅小站" rel="noreferrer">
-                <span className="tw-ghost-icon">
-                    <span className="xicon">
-                        <PointIcon />
+        {button && (
+            <div className="tw-mt-5 tw-text-center tw-w-full">
+                <Link className="tw-ghostBtn" href="/about/#订阅小站" rel="noreferrer">
+                    <span className="tw-ghost-icon">
+                        <span className="xicon">
+                            <PointIcon />
+                        </span>
                     </span>
-                </span>
-                <span>
-                    订阅本站
-                    <span className="tw-font-kaiti">(永久获取所有教程源码及享受问答服务)</span>
-                </span>
-            </Link>
-        </div>
+                    (
+                    <span>
+                        订阅本站
+                        <span className="tw-font-kaiti">(永久获取所有教程源码及享受问答服务)</span>
+                    </span>
+                    )
+                </Link>
+            </div>
+        )}
     </>
 );

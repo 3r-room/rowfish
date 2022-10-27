@@ -12,6 +12,7 @@ export const courses: CourseCardItemType[] = [
         color: 'success',
         status: 1,
         description: '最好的Nestjs框架实战教程',
+        forsub: true,
     },
     {
         name: 'React18最佳实践',
@@ -22,19 +23,21 @@ export const courses: CourseCardItemType[] = [
         color: 'success',
         status: 0,
         description: '最好的react 18+实战教程',
+        forsub: true,
     },
     {
         name: 'Go语言入门指南',
         image: require('./images/courses/golang-base-guide.png'),
         href: '/docs/courses/golang-guides/get-start',
-        status: 1,
+        status: 0,
         description: '快速全方位的掌握Golang的基础知识,为进阶打好基础',
     },
     {
         name: 'TailwindCSS食用指南',
         image: require('./images/courses/tailwindcss-guide.png'),
         href: '/docs/courses/tailwind-guides',
-        status: 1,
+        status: 0,
         description: 'TailwindCSS的深度使用教程',
+        forsub: true,
     },
 ];

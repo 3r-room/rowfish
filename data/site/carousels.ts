@@ -10,7 +10,7 @@ export const carousels: CarouselItemType[] = [
 
     {
         image: require('../blog/images/about.png'),
-        link: '/about/#订阅小站',
+        link: '/subscriber',
         title: '订阅本站',
         description: '一次订阅终身受益，可永久获取本站所有视频教程的文档、源代码及获得问答服务',
     },

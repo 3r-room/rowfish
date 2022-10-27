@@ -53,7 +53,7 @@ export const BlogThumb: FC<Props> = (props) => {
         rf_icon: metaIcon,
         rf_type: rfType = 'icon',
         image: metaImage,
-        rf_comment: enableComment = true,
+        rf_comment: enableComment = false,
         rf_excerpt: enableExcerpt = true,
     } = frontMatter as any;
     const [image, setImage] = useState(assets.image ?? metaImage);

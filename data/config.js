@@ -42,7 +42,7 @@ const navbarItems = [
                 className: 'navicon room-icon',
             },
             {
-                to: '/about#订阅小站',
+                to: '/subscriber',
                 label: '订阅小站',
                 className: 'navicon subscribe-icon',
             },

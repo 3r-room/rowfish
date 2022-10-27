@@ -32,24 +32,31 @@ export const siteData: SiteDataType = {
 
 export const tips: TipItem[] = [
     {
+        id: 'comment',
+        content: '本站已关闭评论功能,有对文章和教程的任何意见和建议欢迎直接加我微信提出',
+        pages: ['blog'],
+        color: 'warning',
+        closeTime: 3600 * 24,
+    },
+    {
         id: 'update',
         content:
             '《Nestjs最佳实践》以及《React18最佳实践》更新中,欢迎<a href="/docs/courses">学习</a>!',
-        color: 'warning',
-        pages: ['blog'],
-        closeTime: 3600 * 24,
-    },
-    {
-        id: 'buy',
-        content: 'Rowfish 主题v2(本站主题)发布啦，欢迎使用哦！<a href="/rowfish">看一下介绍</a>',
-        pages: ['blog'],
         color: 'secondary',
+        pages: ['blog'],
         closeTime: 3600 * 24,
     },
+    // {
+    //     id: 'buy',
+    //     content: 'Rowfish 主题v2(本站主题)发布啦，欢迎使用哦！<a href="/rowfish">看一下介绍</a>',
+    //     pages: ['blog'],
+    //     color: 'secondary',
+    //     closeTime: 3600 * 24,
+    // },
     {
         id: 'subscriber',
         content:
-            '一次订阅终身受益，可永久获取本站所有视频教程的文档、源代码及获得问答服务，<a href="/about/#订阅小站">点此订阅</a>',
+            '一次订阅终身受益，可永久获取本站所有视频教程的文档、源代码及获得问答服务，<a href="/subscriber">点此订阅</a>',
         pages: ['blog'],
         color: 'success',
         closeTime: 3600 * 24,
