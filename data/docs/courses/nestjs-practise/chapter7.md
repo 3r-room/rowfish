@@ -124,7 +124,7 @@ export abstract class BaseSubscriber<E extends ObjectLiteral>
 添加几个公共的DTO用于支持控制器的批量删除，批量恢复，单个删除和单个查询实现软删除功能
 
 ```
-// // src/modules/core/crud/dtos
+// src/modules/core/crud/dtos
 @Injectable()
 export class QueryDetailDto {
     @Transform(({ value }) => tBoolean(value))

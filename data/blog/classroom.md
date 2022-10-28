@@ -83,7 +83,7 @@ order: 0
 
 本套课程的课程表如下图
 
-![](https://img.pincman.com/media202210171503625.png)
+![](https://img.pincman.com/media202210290458779.png)
 
 ### 🚀学习工具
 
