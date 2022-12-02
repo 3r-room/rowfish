@@ -114,18 +114,14 @@ Node.js的优势并不在于生态或性能
 10. 👉 [Redis+BullMQ实现短信及邮件验证](/docs/courses/nestjs-practise/chapter10)
 11. 👉 [WebSocket实现消息广播功能](/docs/courses/nestjs-practise/chapter11)
 12. 👉 [模型动态关联与基于CASL的动态权限的实现](/docs/courses/nestjs-practise/chapter12)
-13. 整合ElasticSearch实现全文搜索
-14. 配置模块与Open API(swagger)配置实现
-15. Jest测试与E2E测试编写
-16. 缓存与日志中间件编写
-17. 使用Yargs构建CLI工具
-18. 实现数据结构迁移命令与数据填充命令
-19. HTTP客户端与爬虫实现
-20. Crontab 定时任务开编写
-21. Graphql,SSE等其它功能的基本使用
-22. Nginx反向代理与PM2部署
-23. Gitea+Drone自动化CI/CD
-24. 使用Lerna/pnpm实现Monorepo组织结构
+13. 整合ElasticSearch实现全文搜索及文件与图片的上传下载
+14. Open API(swagger)与配置式路由模块实现
+15. 动态配置系统及核心APP架构实现
+16. 整合Yargs实现命令行系统及生成和运行迁移命令
+17. 初始数据填充命令实现
+18. Gitea+Drone自动化CI与Nginx+PM2部署
+20. E2E测试与基于Jest的TDD测试编写
+21. 缓存,日志中间件,Graphql,Crontab定时任务及HTTP客户端等功能介绍
 
 ### 3R教室文档
 :::tip
