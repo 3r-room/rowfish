@@ -1,16 +1,9 @@
-
 ---
-
 slug: story
-
 title: 3R教室诞生的故事
-
 authors: pincman
-
 tags: [3R教室,TS全栈开发,远程工作,海外外包]
-
 rf_summary: 这是一篇有些长的故事,讲述了3R教室及3R理念的诞生，以及许多站长的求职与创业的心路历程<br />希望分享的一些东西能帮到正在走同一条路的码农朋友们!
-
 ---
 
 [classroom]: /classroom
